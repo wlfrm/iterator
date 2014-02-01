@@ -1,55 +1,23 @@
-Класс итератор, для модификации существующего итератора/массива на лету
-ИЛИ для внедрения собственной логики в циклическую обработку массивов (расширение логики цикла)
-позволяет навесить callable/callback-функции на момент прохода в цике на возвращающиеся ключи и значения
+Wlfrm Iterator
+===============
 
-Рекомендуется пользоваться фабричным методом-хэлпером wlfrm\MapIterator::create() для более простого создания данного итератора
-При сложностях в использовании класса рекомендуется ознакомится с типом callback @see http://www.php.net/manual/ru/language.types.callable.php
+Provides useful Iterator decorators
 
-Ограничения и правила для callback-функций:
-1. Сигнатуры callback методов для значений должны быть следующего вида:
-	function($value){...}
-а для ключей следующего:
-	function($key){...}
+- FilterIterator: Little bit better than CallbackFilterIterator: allow to map any Traversable
+- MapIterator: Maps keys/values before yielding for any Traversable object
 
-2. Есть возможность передачи ключей или значений в качестве дополнительного параметра в любой из определённых callback,
-для этого необходимо использовать специальные методы-сеттеры setValueCallablePassKeys() и setKeyCallablePassValues()
-В этом случае сигнатуры callback-функций должны иметь иной вид:
-	function($value, $key){...} - для значений, если был вызван setValueCallablePassKeys()
-	function($key, $value){...} - для ключей, если был вызван setKeyCallablePassValues()
+### Installing via Composer
 
-3. Есть возможность передачи дополнительных "внешних" аргументов в функции-замыкания,
-данные аргументы будут передаватся в нужный callback на каждой итерации. Для этого используются следующие методы-сеттеры:
-setValueArgs($arg1, $arg2, ..., $argN)
-setKeyArgs($arg1, $arg2, ..., $argN)
-В этом случае сигнатуры callback-функций должны иметь следующий вид:
-	function($value, $arg1, $arg2, ..., $argN){...} - для значений, если был вызван setValueArgs($arg1, $arg2, ..., $argN)
-	function($key, $arg1, $arg2, ..., $argN){...} - для ключей, если был вызван setKeyArgs($arg1, $arg2, ..., $argN)
+```bash
+# Install Composer
+curl -sS https://getcomposer.org/installer | php
 
-4. Оба способа передачи аргументов для callback (2 и 3) друг друга дополняют, возможно их произвольное смешивание/комбинирование:
-В этом случае сигнатуры callback-функций должны иметь такой вид:
- для значений, если были вызваны
-	$iterator->setValueArgs($arg1, $arg2, ..., $argN)->setValueCallablePassKeys();
- ожидается такой callback:
-	function($value, $key, $arg1, $arg2, ..., $argN){...}
+# Add Guzzle as a dependency
+php composer.phar require wlfrm/iterator:~1.0
+```
 
- для ключей, если были вызваны
-	$iterator->setKeyArgs($arg1, $arg2, ..., $argN)->setKeyCallablePassValues();
- ожидается такой callback:
-	function($key, $value, $arg1, $arg2, ..., $argN){...}
+After installing, you need to require Composer's autoloader:
 
-
-5. Callback метод для значений может возвращать любые значения.
-
-6. Callback метод для ключей должен возвращать скалярные или NULL значения для корректной работы
-иначе будет выброшено исключение RuntimeException
-Это связано с потенциальным использованием SPL-функции iterator_to_array()
-подробности данного ограничения можно почитать тут: @see http://md1.php.net/manual/ru/language.types.array.php
-
-7. Сигнатуры callback должны соответствовать количеству обязательных передаваемых аргументов.
-В ином случае будет выброшено InvalidArgumentException
-
-8. Типы значений callback-аргументов проверяются во время выполнения, типы должны соответствовать указанным типам в сигнатуре callback
-в случае расхождения будет выброшено соответствующее php-исключение или сгенерирована ошибка.
-
-9. Хотя бы один callback должен быть установлен: или для ключей или для значений или для обоих.
-Иначе использование класса не имеет смысла и получите CLib_Exception_BadUsage
+```php
+require 'vendor/autoload.php';
+```
