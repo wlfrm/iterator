@@ -1,5 +1,5 @@
 {
-    "name": "wlfrm/Iterator",
+    "name": "wlfrm/iterator",
     "type": "library",
     "license": "MIT",
     "description": "Util class for Traversable/arrays customisation",
